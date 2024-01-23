@@ -15,8 +15,8 @@ import time
 #name_model = "yolov8x"
 classes = classes_name.classes
 
-for iPath in range(0,3):
-    for iModel in range(0,1):
+for iPath in range(0,4):
+    for iModel in range(0,2):
         if iPath == 0:
             path_type = "gray_650" 
         if iPath == 1:
@@ -31,30 +31,32 @@ for iPath in range(0,3):
         else:
             name_model = "yolov8x"
 
+        #print(f"Using {path_type} and {name_model}\n -----")
 
-        img_path = "/home/clodoaldo/Documentos/non_HLB/" + path_type + "/"
-        output_path = "/home/clodoaldo/Documentos/GitHub/mestrado_ppgcc/yolo_test/output/"
+        time_to_save = []
+        img_path = "C:/Users/cdsfj/Desktop/DOCUMENTOS/non_HLB/" + path_type + "/"
+        output_path = "C:/Users/cdsfj/Desktop/DOCUMENTOS/non_HLB/output/"
         confidence_number = 0.3
         model = YOLO(name_model + ".pt")
 
         output_path = output_path + name_model + "/"
         txt_path = output_path + "output_cf_" + str(confidence_number) + "_" + name_model + "_" + path_type + ".txt"
 
-        with open(txt_path, "w") as f:
-            f.write("Information about the current run\n")
-            f.write(f"Model used: {name_model}\n")
-            f.write(f"Image used: {path_type}\n")
-        
         file_names = [f for f in os.listdir(img_path) if os.path.isfile(os.path.join(img_path, f))]
 
-        selected_names = file_names[::10]
+        #selected_names = file_names[::30]
+        selected_names = file_names
 
         if not os.path.exists(output_path):
             os.makedirs(output_path)
 
-        with open(txt_path, "a") as f:
+        with open(txt_path, "w") as f:
+            f.write("Information about the current run\n")
+            f.write(f"Model used: {name_model}\n")
+            f.write(f"Image used: {path_type}\n\n")
+            
             for i in range(np.size(selected_names)):
-                f.write(f"Begin image: {i} ---------------------------------------------------\n")
+                f.write(f"Begin image: {i} ---------------------------------------------------\n\n")
                 
                 start_time = time.time()
                 results = model.predict(img_path + selected_names[i])
@@ -87,13 +89,21 @@ for iPath in range(0,3):
                             class_name = classes[int(class_label)+1]
                             label = f"#{k} - Class: {class_name} - {int(class_label)+1}, Confidence: {confidence:.2f}"
                             cv2.putText(img, label, (x_min, y_min - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, thickness)
-                            f.write(f"#{k} - Box: ({x_min}, {y_min}, {x_max}, {y_max}), {label}\n")
+                            f.write(f"{label}\n")
                             k = k + 1
 
+                time_to_save.append(inference_time)
                 output_path_end = output_path + "output_" + str(i) + "_cf_" + str(confidence_number) + "_" + name_model + "_" + path_type + ".png"
                 
                 f.write(f"Inference Time: {inference_time:.4f} seconds\n")
-                f.write(f"Finished image: {i} ---------------------------------------------------\n")
+                f.write(f"Finished image: {i} ---------------------------------------------------\n\n")
                 # Salvar a imagem com os boxes desenhados
                 cv2.imwrite(output_path_end, img)
                 print(f"Imagem salva em: {output_path_end}")
+            
+            f.write(f"Max inference time: {np.max(inference_time)} seconds\n")
+            f.write(f"Min inference time: {np.min(inference_time)} seconds\n")
+            f.write(f"Avg inference time: {np.mean(inference_time)} seconds\n")
+            f.write(f"Median inference time: {np.median(inference_time)} seconds\n")
+            f.write(f"95th percentile inference time: {np.percentile(inference_time, 95)} seconds\n")
+            f.write(f"99th percentile inference time: {np.percentile(inference_time, 99)} seconds\n")
