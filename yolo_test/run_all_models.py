@@ -54,7 +54,7 @@ for iPath in range(0,3):
 
         with open(txt_path, "a") as f:
             for i in range(np.size(selected_names)):
-                f.write(f"Begin image: {str(i)} ---------------------------------------------------\n")
+                f.write(f"Begin image: {i} ---------------------------------------------------\n")
                 
                 start_time = time.time()
                 results = model.predict(img_path + selected_names[i])
@@ -93,7 +93,7 @@ for iPath in range(0,3):
                 output_path_end = output_path + "output_" + str(i) + "_cf_" + str(confidence_number) + "_" + name_model + "_" + path_type + ".png"
                 
                 f.write(f"Inference Time: {inference_time:.4f} seconds\n")
-                f.write(f"Finished image: {str(i)} ---------------------------------------------------\n")
+                f.write(f"Finished image: {i} ---------------------------------------------------\n")
                 # Salvar a imagem com os boxes desenhados
                 cv2.imwrite(output_path_end, img)
                 print(f"Imagem salva em: {output_path_end}")
