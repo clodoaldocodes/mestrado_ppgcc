@@ -17,18 +17,20 @@ classes = classes_name.classes
 
 for iPath in range(0,4):
     for iModel in range(0,2):
+        print(iPath)
+        print(iModel)
         if iPath == 0:
             path_type = "gray_650" 
         if iPath == 1:
             path_type = "gray_850"
         if iPath == 2:
             path_type = "rgb_q6"
-        else:
+        if iPath == 3:
             path_type = "rgb_q4"
 
         if iModel == 0:
             name_model = "yolov8n"
-        else:
+        if iModel == 1:
             name_model = "yolov8x"
 
         #print(f"Using {path_type} and {name_model}\n -----")
@@ -44,8 +46,8 @@ for iPath in range(0,4):
 
         file_names = [f for f in os.listdir(img_path) if os.path.isfile(os.path.join(img_path, f))]
 
-        #selected_names = file_names[::30]
-        selected_names = file_names
+        selected_names = file_names[::15]
+        #selected_names = file_names
 
         if not os.path.exists(output_path):
             os.makedirs(output_path)
@@ -101,9 +103,10 @@ for iPath in range(0,4):
                 cv2.imwrite(output_path_end, img)
                 print(f"Imagem salva em: {output_path_end}")
             
-            f.write(f"Max inference time: {np.max(inference_time)} seconds\n")
-            f.write(f"Min inference time: {np.min(inference_time)} seconds\n")
-            f.write(f"Avg inference time: {np.mean(inference_time)} seconds\n")
-            f.write(f"Median inference time: {np.median(inference_time)} seconds\n")
-            f.write(f"95th percentile inference time: {np.percentile(inference_time, 95)} seconds\n")
-            f.write(f"99th percentile inference time: {np.percentile(inference_time, 99)} seconds\n")
+            f.write(f"Max inference time: {np.max(time_to_save)} seconds\n")
+            f.write(f"Min inference time: {np.min(time_to_save)} seconds\n")
+            f.write(f"Avg inference time: {np.mean(time_to_save)} seconds\n")
+            f.write(f"Std inference time: {np.std(time_to_save)} seconds\n")
+            f.write(f"Median inference time: {np.median(time_to_save)} seconds\n")
+            f.write(f"95th percentile inference time: {np.percentile(time_to_save, 95)} seconds\n")
+            f.write(f"99th percentile inference time: {np.percentile(time_to_save, 99)} seconds\n")
